@@ -1,0 +1,173 @@
+from kivy.app import App
+from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.label import Label
+from kivy.uix.button import Button
+from kivy.uix.textinput import TextInput
+from kivy.uix.image import Image
+from kivy.graphics import Color
+
+class ToklinaCleaningApp(App):
+    def build(self):
+        # Set the title with spaces
+        self.title = "Toklina Cleaning App"
+
+        # Create the main layout as a FloatLayout
+        self.layout = FloatLayout()
+
+        # Set the background image to fill the entire FloatLayout
+        self.background_image = Image(source="suitable.jpg")
+        self.layout.add_widget(self.background_image)
+
+        # Add the logo on top of the background image
+        self.logo_image = Image(source="toklina_main_logo.png", size_hint=(0.3, 0.3))
+        self.logo_image.pos_hint = {'center_x': 0.5, 'top': 0.9}
+        self.layout.add_widget(self.logo_image)
+
+        # label widget with custom color
+        with self.layout.canvas.before:
+            Color(1, 0, 0)  # RGB values for red
+        self.greeting = Label(
+            text="Toklina Keeping you Smart and Smarter?",
+            font_size=18,  # Reduce the font size
+            color='#0A122A',  # HTML color code for teal
+        )
+        self.greeting.pos_hint = {'center_x': 0.5, 'top': 0.75}
+        self.layout.add_widget(self.greeting)
+
+        # text input widget
+        self.user = TextInput(
+            multiline=False,
+            padding_y=(5, 5),  # Reduce the padding
+            padding_x=(self.layout.width / 0.5 - 0, 0),  # Center the text input
+            size_hint=(0.6, None),  # Reduce the width
+            height=30,  # Set a fixed height
+            pos_hint={'center_x': 0.5, 'top': 0.6},
+            input_filter=lambda text, from_undo: text.capitalize()
+        )
+        
+        self.layout.add_widget(self.user)
+
+        # button widget with custom background color
+        with self.layout.canvas.after:
+            Color(0, 0.5, 0)  # RGB values for green
+        self.button = Button(
+            text="Enter Username & Click Here",
+            size_hint=(0.6, None),
+            height=40,
+            pos_hint={'center_x': 0.5, 'top': 0.5},
+            bold=True,
+            background_color='#00FFCE',
+        )
+        self.button.bind(on_press=self.callback)
+        self.layout.add_widget(self.button)
+
+        return self.layout
+
+    def callback(self, instance):
+        # Remove the button and text input widgets
+        self.layout.remove_widget(self.button)
+        self.layout.remove_widget(self.user)
+        
+        # Change the background image
+        self.background_image.source = "bg_new.jpg"
+
+        # Create a multiline label with centered text
+        self.callback_label = Label(
+            text="Greetings " + self.user.text + "!\n Toklina Team welcomes you.\nWe are enthusiastic to be of your choice.\nYour satisfaction is our goal, therefore all our services\nare customized to your needs.\n We are happy to be at your servive.",
+            font_size=22,  # Adjust the font size as needed
+            color='#FFFFFF',  # HTML color code for teal
+            markup=True,  # Enable markup to apply bold style
+            halign='center',  # Center align the text
+            valign='middle',  # Vertically center the text
+        )
+        self.callback_label.bold = True  # Apply bold style
+        self.callback_label.size_hint = (None, None)  # Set a fixed size
+        self.callback_label.size = (300, 100)  # Adjust the size as needed
+        self.callback_label.pos_hint = {'center_x': 0.5, 'y': 0.4}  # Position the label
+        self.layout.add_widget(self.callback_label)
+
+        # Create a "Create Profile" button
+        self.create_profile_button = Button(
+            text="Create Profile",
+            size_hint=(0.6, None),
+            height=40,
+            pos_hint={'center_x': 0.5, 'top': 0.2},  # Position the button
+            bold=True,
+            background_color='#00FFCE',
+        )     
+        self.create_profile_button.bind(on_press=self.create_profile_callback)
+        self.layout.add_widget(self.create_profile_button)
+
+        return self.layout
+
+    def create_profile_callback(self, instance):
+        # Remove the "Create Profile" button, "Callback_label", "logo" and "self.greeting", widgets
+        self.layout.remove_widget(self.create_profile_button)
+        self.layout.remove_widget(self.greeting)
+        self.layout.remove_widget(self.callback_label)
+        self.layout.remove_widget(self.logo_image)
+
+        # Change the background image
+        self.background_image.source = "edit.jpg"
+
+        # Create a form layout
+        form_layout = FloatLayout(size_hint=(0.8, 0.6), pos_hint={'center_x': 0.5, 'top': 0.8})
+        
+        # Create a list of label texts
+        labels_text = [
+            "Title:", "First Name:", "Surname:", "Religion:", "Age:",
+            "Address:", "Email:", "Phone Number:",
+        ]
+
+        # Create a list to hold labels and text input widgets
+        labels_and_inputs = []
+
+        # Create labels and text input widgets
+        for i, text in enumerate(labels_text):
+            label = Label(
+                text=text,
+                size_hint=(0.2, None),
+                height=30,
+                pos_hint={'center_x': 0.3, 'top': 1 - (i / 10)},
+                halign='right',
+            )
+            text_input = TextInput(
+                multiline=False,
+                padding_y=(5, 5),
+                padding_x=(self.layout.width / 0.5 - 0, 0),
+                size_hint=(0.6, None),
+                height=30,
+                pos_hint={'center_x': 0.7, 'top': 1 - (i / 10)},
+                input_filter=lambda text, from_undo: text.capitalize()
+            )
+            labels_and_inputs.extend([label, text_input])
+
+            self.layout.add_widget(label)
+            self.layout.add_widget(text_input)
+            
+            # Add a "Submit" button for the form
+        submit_button = Button(
+            text="Submit",
+            size_hint=(0.6, None),
+            height=40,
+            pos_hint={'center_x': 0.5, 'top': 0.05},
+            bold=True,
+            background_color='#00FFCE',
+        )
+        submit_button.bind(on_press=self.submit_form_callback)
+        form_layout.add_widget(submit_button)
+
+        self.layout.add_widget(form_layout)
+
+    def submit_form_callback(self, instance):
+        # Handle the submission of the form data
+        # You can access the input data from the text input widgets here
+        pass
+
+# run ToklinaCleaningApp
+if __name__ == "__main__":
+    ToklinaCleaningApp().run()
+    
+
+
+
